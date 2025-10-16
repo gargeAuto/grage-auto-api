@@ -1,0 +1,1 @@
+/home/alex/Documents/PHP/backgarageauto/vendor/bin/sail
