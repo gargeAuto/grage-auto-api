@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('appointment', function (Blueprint $table) {
             $table->id();
-            $table->customer_id();
-            $table->customer();
-            $table->garage();
-            $table->engineer();
-            $table->service();
-            $table->total_price();
-            $table->new_price();
-            $table->comments();
+            $table->foreignId('customer_id')->constrained('users')->onDelete('cascade');
+            $table->string("customer");
+            $table->string("garage");
+            $table->string("engineer");
+            $table->string("service");
+            $table->decimal("total_price");
+            $table->decimal("new_price");
+            $table->longText("comments")->nullable();
         });
     }
 
