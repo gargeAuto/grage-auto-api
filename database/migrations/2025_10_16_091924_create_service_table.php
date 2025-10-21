@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('service', function (Blueprint $table) {
             $table->id();
-            $table->wording();
-            $table->description();
-            $table->delay();
+            $table->string("wording");
+            $table->longText("description");
+            $table->integer("delay");
         });
     }
 

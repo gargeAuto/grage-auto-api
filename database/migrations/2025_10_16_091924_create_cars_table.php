@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('cars', function (Blueprint $table) {
             $table->id();
-            $table->registration();
-            $table->brand();
-            $table->model();
-            $table->years();
+            $table->string("registration");
+            $table->string("brand");
+            $table->string("model");
+            $table->integer("years");
             $table->foreignId('user_id')->constrained(
               table: 'users', indexName: 'cars_user_id'
                 );

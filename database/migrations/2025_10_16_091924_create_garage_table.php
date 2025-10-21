@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('garage', function (Blueprint $table) {
             $table->id();
-            $table->name();
-            $table->adress();
-            $table->postal_code();
-            $table->city();
-            $table->email();
-            $table->worker_quantity();
-            $table->service_price();
+            $table->string("name");
+            $table->string("adress");
+            $table->integer("postal_code");
+            $table->string("city");
+            $table->string("email")->unique();
+            $table->integer("engineer_quantity");
+            $table->decimal("service_price");
         });
     }
 

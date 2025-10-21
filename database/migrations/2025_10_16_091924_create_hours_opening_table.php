@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('hours_opening', function (Blueprint $table) {
             $table->id();
-            $table->garage();
-            $table->start_morning_date();
-            $table->end_morning_date();
-            $table->start_afternoon_date();
-            $table->end_afternoon_date();
-            $table->close();
+            $table->string("garage");
+            $table->time("start_morning_date");
+            $table->time("end_morning_date");
+            $table->time("start_afternoon_date");
+            $table->time("end_afternoon_date");
+            $table->boolean("close");
         });
     }
 
