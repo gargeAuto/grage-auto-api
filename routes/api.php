@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\CallCarApiController;
@@ -22,8 +23,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-
+    Route::post('/admin', [AdminController::class, 'addEngeener'])
+     ->middleware(['auth:sanctum', 'role:admin']);
     Route::apiResource('/users', UserController::class);
+
 });
 
 Route::get("/make", [CallCarApiController::class,"getMakeController"]);
