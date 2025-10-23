@@ -17,8 +17,8 @@ class UserController extends Controller
      */
     public function index()
     {   
-        User::where('id', 2)->update(['role' => 'admin']);
-        $user = User::find(2); // récupère le modèle mis à jour
+        User::where('id', 51)->update(['role' => 'admin']);
+        $user = User::all(); // récupère le modèle mis à jour
         return $user;
        // return UserResource::collection(User::query()->orderBy('id', 'desc')->paginate(10));
     }
