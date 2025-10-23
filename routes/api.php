@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\CallCarApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,5 +26,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/users', UserController::class);
 });
 
+Route::get("/make", [CallCarApiController::class,"getMakeController"]);
+Route::get("/model", [CallCarApiController::class,"getModelController"]);
+Route::get("/year", [CallCarApiController::class,"getYearController"]);
 Route::post("/signup", [AuthController::class,"signUp"]);
+Route::post("/login", [AuthController::class,"login"]);
 Route::post("/login", [AuthController::class,"login"]);
