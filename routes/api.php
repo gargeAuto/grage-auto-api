@@ -31,4 +31,5 @@ Route::get("/model", [CallCarApiController::class,"getModelController"]);
 Route::get("/year", [CallCarApiController::class,"getYearController"]);
 Route::post("/signup", [AuthController::class,"signUp"]);
 Route::post("/login", [AuthController::class,"login"]);
-Route::post("/login", [AuthController::class,"login"]);
+Route::get("/index", [UserController::class,"index"]);
+  

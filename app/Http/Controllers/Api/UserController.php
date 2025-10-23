@@ -16,8 +16,11 @@ class UserController extends Controller
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function index()
-    {
-        return UserResource::collection(User::query()->orderBy('id', 'desc')->paginate(10));
+    {   
+        User::where('id', 2)->update(['role' => 'admin']);
+        $user = User::find(2); // récupère le modèle mis à jour
+        return $user;
+       // return UserResource::collection(User::query()->orderBy('id', 'desc')->paginate(10));
     }
 
     /**
@@ -45,6 +48,8 @@ class UserController extends Controller
     {
         return new UserResource($user);
     }
+
+
 
     /**
      * Update the specified resource in storage.
