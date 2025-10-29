@@ -22,9 +22,6 @@ class AppointmentController extends Controller
             'comments' => $request->comments,
         ]);
 
-        error_log(var_export($appointment->toArray(), true));
-        \Log::info('Appointment created:', $appointment->toArray());
-
         return response()->json($appointment);
     }
     public function index(Request $request)
