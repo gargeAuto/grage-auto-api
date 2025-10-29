@@ -33,11 +33,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/appointments', [AppointmentController::class, 'store']);
     Route::get('/user', fn(Request $request) => $request->user());
+    Route::get('/appointments', [AppointmentController::class, 'index']);
+    Route::delete('/appointments/{id}', [AppointmentController::class, 'destroy']);
 
     // Routes admin
     Route::middleware('role:admin')->group(function () {
-        Route::post('/admin', [AdminController::class, 'addEngineer']);
-        Route::get('/appointments', [AppointmentController::class, 'index']);
+        Route::post('/admin', [AdminController::class, 'addEngineer']);    
+        Route::patch('/appointments/{id}/assign', [AppointmentController::class, 'assignEngineer']);
         Route::apiResource('/users', UserController::class);
     });
 });
