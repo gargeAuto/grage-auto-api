@@ -24,7 +24,7 @@ class AppointmentController extends Controller
 
         return response()->json($appointment);
     }
-    public function index(Request $request)
+    public function getAppointmentWithRole(Request $request)
     {
         $user = $request->user();
 
