@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Notifications\InvoicePaid;
+
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\SignupRequest;
 use Illuminate\Http\Request;
 use \App\Models\User;
+use App\Notifications\VerifyMail;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-
 
     public function signUp(SignupRequest $request)
     {
@@ -19,11 +22,21 @@ class AuthController extends Controller
         /**
          *  @var \App\Models\User $user 
          */
+
+
+
         $user = User::create([
             "name" => $data["name"],
             "email" => $data["email"],
             "password" => bcrypt($data["password"]),
         ]);
+
+        // $notification = new InvoicePaid();
+
+        // Envoi de la notification
+        $notification = $user->notify(new VerifyMail($user));
+        //  error_log(var_export($newUser,true));
+        // \Log::info('InvoicePaid notification sent', $notification->toArray($user));
         $token = $user->createToken("main")->plainTextToken;
 
         return response(compact("user", "token"));
@@ -51,5 +64,18 @@ class AuthController extends Controller
         $user->tokens()->where('id', $user->currentAccessToken()->id)->delete();
 
         return response('', 204);
+    }
+    public function verifyEmail(Request $request)
+    {
+        if (!$request->hasValidSignature()) {
+            return  response([
+                "message" => "lien inccorect ou expiré"
+            ], 422);
+        }
+        $userId = $request->query('id');
+        $user = User::findOrFail($userId);
+        $user->email_verified_at = now();
+        $user->save();
+        return response()->json(['message' => 'Email vérifié avec succès !']);
     }
 }

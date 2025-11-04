@@ -23,6 +23,8 @@ use Illuminate\Support\Facades\Route;
 // Auth publique
 Route::post('/signup', [AuthController::class, 'signUp']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::get('/verify-email', [AuthController::class, 'verifyEmail'])
+    ->name('verify.email');
 
 // API publiques
 Route::get('/make', [CallCarApiController::class, 'getMakeController']);

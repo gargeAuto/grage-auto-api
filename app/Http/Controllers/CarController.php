@@ -18,8 +18,10 @@ class CarController extends Controller
             'model' => $request->model,
             'years' => $request->years,
         ]);
-
+        error_log(var_export($car, true));
+        \Log::info('Car created:', $car->toArray());
         return response()->json($car);
+        
     }
 
     public function getAllCars(Request $request)
