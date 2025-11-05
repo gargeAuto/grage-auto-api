@@ -48,7 +48,7 @@ class VerifyMail extends Notification
         return (new MailMessage)
             ->from('barrett@example.com', 'Le garagiste')
             ->greeting("Bonjour " . $notifiable->name)
-            ->line('Cliquez pour verifier votre mail !')
+            ->line('Votre rendez vous à été pris.')
             //->lineIf($this->amount > 0, "Amount paid: {$this->amount}")
             ->action('verifier mon e-mail', $url)
             ->line('penser a regarder les spam')
