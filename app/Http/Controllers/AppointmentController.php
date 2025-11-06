@@ -2,25 +2,46 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ConfirmationAppointmentMail;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use \App\Models\Appointment;
 use App\Models\Service;
+use Illuminate\Support\Facades\Mail;
+use App\Models\User;
+use App\Models\Cars;
 
 class AppointmentController extends Controller
 {
     public function store(Request $request)
     {
         $user = $request->user();
+        $carData = $request->carData;
+        $cars = Cars::create([
+            'user_id' => $user->id,
+            'immat' => $carData['immat'],
+            'km' => $carData['km'],
+            'make' => $carData['make'],
+            'model' => $carData['model'],
+            'year' => $carData['year']
+        ]);
 
+
+
+        $appointmentData = $request->date;
+        $date = Carbon::parse($appointmentData)->format('Y-m-d H:i:s');
         $appointment = Appointment::create([
             'customer_id' => $user->id,
-            'engineer_id' => $request->engineer_id,
-            'service' => Carbon::create($request->service),
-            'total_price' => $request->total_price,
-            'new_price' => $request->new_price,
-            'comments' => $request->comments,
+            'selectedStart' => $date,
+            'engineer_id' => $appointmentData['engineer_id'] ?? null,
+            'service' => $appointmentData['service'] ?? null,
+            'total_price' => $appointmentData['total_price'] ?? null,
+            'new_price' => $appointmentData['new_price'] ?? null,
+            'comments' => $appointmentData['comments'] ?? null,
         ]);
+
+        /** @var User $user */
+        Mail::to($user->email)->send(new ConfirmationAppointmentMail($user, $cars, $appointment));
 
         return response()->json($appointment);
     }

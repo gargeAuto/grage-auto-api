@@ -32,7 +32,7 @@ Route::get('/model', [CallCarApiController::class, 'getModelController']);
 Route::get('/year', [CallCarApiController::class, 'getYearController']);
 
 // Routes protégées
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth:sanctum','verified')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/cars', [CarController::class, 'store']);
     Route::get('/cars', [CarController::class, 'getAllCars']);

@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class Cars extends Model
 {
     protected $fillable = [
-        'registration',
-        'brand',
+        'user_id',
+        'immat',
+        'km',
+        'make',
         'model',
-        'years',
+        'year'
     ];
        
     public function user()

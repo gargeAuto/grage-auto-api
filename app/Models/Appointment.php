@@ -17,6 +17,7 @@ class Appointment extends Model
         'customer_id',
         'engineer_id',
         'service',
+        'selectedStart',
         'total_price',
         'new_price',
         'comments',
