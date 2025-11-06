@@ -45,7 +45,7 @@ class VerifyMail extends Notification
            // $frontendUrl = 'https://frontend-tonsite.com/verify-email?' . parse_url($url, PHP_URL_QUERY);
 
         return (new MailMessage)
-         ->from('barrett@example.com', 'Le garagiste')
+         ->from('luc.alexandre.dulon@gmail.com', 'Le garagiste')
             ->greeting("Bonjour " . $notifiable->name)
             ->line('Votre rendez vous à été pris.')
              //->lineIf($this->amount > 0, "Amount paid: {$this->amount}")
