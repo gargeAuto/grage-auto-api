@@ -8,14 +8,16 @@ use App\Notifications\InvoicePaid;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\SignupRequest;
+use App\Mail\ConfirmationAppointmentMail;
 use Illuminate\Http\Request;
 use \App\Models\User;
 use App\Notifications\VerifyMail;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
-     public function signUp(SignupRequest $request)
+    public function signUp(SignupRequest $request)
     {
         \Log::info($request->all());
         $data = $request->validated();
@@ -28,7 +30,7 @@ class AuthController extends Controller
         $user = User::create([
             "name" => $data["name"],
             "surname" => $data["surname"],
-            "phone"=> $data["phone"],
+            "phone" => $data["phone"],
             "email" => $data["email"],
             "password" => bcrypt($data["password"]),
         ]);
@@ -43,14 +45,15 @@ class AuthController extends Controller
 
 
         return response()->json([
-    "message" => "Un email de vérification a été envoyé à votre adresse email. 
+            "message" => "Un email de vérification a été envoyé à votre adresse email. 
     Veuillez vérifier votre boîte de réception vaus spame et cliquer sur le lien de vérification pour activer votre compte.",
-], 201);
+        ], 201);
     }
 
     public function login(LoginRequest $request)
     {
-    
+
+
         $credentials = $request->validated();
         if (!Auth::attempt($credentials)) {
             return response([
@@ -59,11 +62,12 @@ class AuthController extends Controller
         }
         /** @var User $user */
         $user = Auth::user();
-        if(!$user->hasVerifiedEmail()){
+        if (!$user->hasVerifiedEmail()) {
             return response([
                 "message" => "Veuillez vérifier votre adresse email avant de vous connecter."
             ], 403);
         }
+
         $token = $user->createToken("main")->plainTextToken;
         return response(compact("user", "token"));
     }
@@ -94,4 +98,6 @@ class AuthController extends Controller
             "token" => $token
         ]);
     }
+
+    public function test(Request $request) {}
 }
