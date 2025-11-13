@@ -12,11 +12,19 @@ use App\Mail\ConfirmationAppointmentMail;
 use Illuminate\Http\Request;
 use \App\Models\User;
 use App\Notifications\VerifyMail;
+use Illuminate\Container\Attributes\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use PgSql\Lob;
+use App\Http\Services\JwtService;
 
 class AuthController extends Controller
 {
+    private JwtService $jwtService;
+    public function __construct(JwtService $jwtService)
+    {
+        $this->jwtService = $jwtService;
+    }
     public function signUp(SignupRequest $request)
     {
         \Log::info($request->all());
@@ -43,7 +51,6 @@ class AuthController extends Controller
         // \Log::info('InvoicePaid notification sent', $notification->toArray($user));
         //$token = $user->createToken("main")->plainTextToken;
 
-
         return response()->json([
             "message" => "Un email de vérification a été envoyé à votre adresse email. 
     Veuillez vérifier votre boîte de réception vaus spame et cliquer sur le lien de vérification pour activer votre compte.",
@@ -67,8 +74,8 @@ class AuthController extends Controller
                 "message" => "Veuillez vérifier votre adresse email avant de vous connecter."
             ], 403);
         }
-
-        $token = $user->createToken("main")->plainTextToken;
+        \Log::info($user->role);
+        $token = $this->jwtService->generateToken( 3600, $user);
         return response(compact("user", "token"));
     }
 
@@ -83,6 +90,7 @@ class AuthController extends Controller
     }
     public function verifyEmail(Request $request)
     {
+         \Log::info($request->all());
         if (!$request->hasValidSignature()) {
             return  response([
                 "message" => "lien inccorect ou expiré"
@@ -92,7 +100,7 @@ class AuthController extends Controller
         $user = User::findOrFail($userId);
         $user->email_verified_at = now();
         $user->save();
-        $token = $user->createToken("main")->plainTextToken;
+        $token = $this->jwtService->generateToken( 3600, $user);
         return response()->json([
             "message" => "Votre adresse e-mail a été vérifiée avec succès.",
             "token" => $token

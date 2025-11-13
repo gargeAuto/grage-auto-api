@@ -43,16 +43,15 @@ class VerifyMail extends Notification
             Carbon::now()->addMinutes(60), // expiration
             ['id' => $notifiable->id]        // paramètre
         );
-        // $frontendUrl = 'https://frontend-tonsite.com/verify-email?' . parse_url($url, PHP_URL_QUERY);
-
+         $frontendUrl = 'http://localhost:5174/validation-email?url=' . urlencode($url);
+        \Log::info('Frontend URL: ' . $frontendUrl);
         return (new MailMessage)
-
          ->from('luc.alexandre.dulon@gmail.com', 'Le garagiste')
 
             ->greeting("Bonjour " . $notifiable->name)
             ->line('Cliquez pour verifier votre mail !')
             //->lineIf($this->amount > 0, "Amount paid: {$this->amount}")
-            ->action('verifier mon e-mail', $url)
+            ->action('verifier mon e-mail', $frontendUrl)
             ->line('penser a regarder les spam')
             ->salutation("Cordialement,\n Le garagiste ");
     }
