@@ -37,20 +37,20 @@ class VerifyMail extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        // $url = url('/invoice/' . $this->invoice->id);
-        $url = URL::temporarySignedRoute(
+         //$url = url('/invoice/' . $this->invoice->id);
+       $url = URL::temporarySignedRoute(
             'verify.email',                // nom de la route
             Carbon::now()->addMinutes(60), // expiration
             ['id' => $notifiable->id]        // paramètre
         );
-        // $frontendUrl = 'https://frontend-tonsite.com/verify-email?' . parse_url($url, PHP_URL_QUERY);
-
+         $frontendUrl = 'http://localhost:5174/validation-email?' . parse_url($url, PHP_URL_QUERY);
+        \Log::info('Frontend URL: ' . $frontendUrl);
         return (new MailMessage)
             ->from('barrett@example.com', 'Le garagiste')
             ->greeting("Bonjour " . $notifiable->name)
             ->line('Votre rendez vous à été pris.')
             //->lineIf($this->amount > 0, "Amount paid: {$this->amount}")
-            ->action('verifier mon e-mail', $url)
+            ->action('verifier mon e-mail', $frontendUrl)
             ->line('penser a regarder les spam')
             ->salutation("Cordialement,\n Le garagiste ");
     }

@@ -28,7 +28,7 @@ class AppointmentController extends Controller
 
 
 
-        $appointmentData = $request->date;
+        $appointmentData = $request->selectedStart;
         $date = Carbon::parse($appointmentData)->format('Y-m-d H:i:s');
         $appointment = Appointment::create([
             'customer_id' => $user->id,
@@ -43,7 +43,10 @@ class AppointmentController extends Controller
         /** @var User $user */
         Mail::to($user->email)->send(new ConfirmationAppointmentMail($user, $cars, $appointment));
 
-        return response()->json($appointment);
+        return response( [
+            'message' => 'Votre rendez-vous a été créé avec succès. Un email de confirmation a été envoyé à votre adresse email.',
+            
+        ], 201);
     }
     public function getAppointmentWithRole(Request $request)
     {
