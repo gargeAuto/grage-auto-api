@@ -18,9 +18,9 @@ class Appointment extends Model
         'engineer_id',
         'service',
         'selectedStart',
-        'total_price',
-        'new_price',
-        'comments',
+        //'total_price',
+        //'new_price',
+        //'comments',
     ];
 
     public function customer()
@@ -35,7 +35,5 @@ class Appointment extends Model
     {
         return $this->belongsToMany(\App\Models\Service::class, 'appointment_service');
     }
-    protected $casts = [
-        'service' => 'datetime',
-    ];
+   
 }

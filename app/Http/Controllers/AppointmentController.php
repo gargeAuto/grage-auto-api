@@ -10,6 +10,7 @@ use App\Models\Service;
 use Illuminate\Support\Facades\Mail;
 use App\Models\User;
 use App\Models\Cars;
+use Illuminate\Container\Attributes\DB;
 
 class AppointmentController extends Controller
 {
@@ -35,17 +36,17 @@ class AppointmentController extends Controller
             'selectedStart' => $date,
             'engineer_id' => $appointmentData['engineer_id'] ?? null,
             'service' => $appointmentData['service'] ?? null,
-            'total_price' => $appointmentData['total_price'] ?? null,
-            'new_price' => $appointmentData['new_price'] ?? null,
-            'comments' => $appointmentData['comments'] ?? null,
+            // 'total_price' => $appointmentData['total_price'] ?? null,
+            // 'new_price' => $appointmentData['new_price'] ?? null,
+            // 'comments' => $appointmentData['comments'] ?? null,
         ]);
 
         /** @var User $user */
         Mail::to($user->email)->send(new ConfirmationAppointmentMail($user, $cars, $appointment));
 
-        return response( [
+        return response([
             'message' => 'Votre rendez-vous a été créé avec succès. Un email de confirmation a été envoyé à votre adresse email.',
-            
+
         ], 201);
     }
     public function getAppointmentWithRole(Request $request)
@@ -93,5 +94,40 @@ class AppointmentController extends Controller
             'message' => 'Rendez-vous supprimé avec succès.',
             'appointment_id' => $id,
         ], 200);
+    }
+
+    public function getTenAppointmentsOfTheDay()
+    {
+
+        $dateTimeStart = now()->startOfDay();
+        $dateTimeEnd = now()->endOfDay();
+
+        $appointments = Appointment::whereBetween('selectedStart', [$dateTimeStart, $dateTimeEnd])
+            ->orderBy('selectedStart', 'desc')
+            ->paginate(10)
+            ->get();
+
+        return $appointments;
+    }
+
+    public function getAppointementSearch(Request $request)
+    {
+        $query = $request->input('q');
+        $columns = ['name', 'surname', 'email', 'phone'];
+
+
+        $results = DB::table('appointments')
+            ->join('users', 'appointments.id', '=', 'users.customer_id')
+            ->join('service','appointments.id', '=', 'service.customer_id')
+            ->select('users.name', 'posts.title');
+
+         $users = $results->where(function ($q) use ($query, $columns) {
+            foreach ($columns as $column) {
+                $q->orWhere($column, 'like', "%{$query}%");
+            }
+        })
+            ->get();
+
+            return  $users;
     }
 }
