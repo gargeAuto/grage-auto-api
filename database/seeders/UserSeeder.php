@@ -14,11 +14,17 @@ class UserSeeder extends Seeder
         $password = env('DEFAULT_USER_PASSWORD');
 
         User::updateOrCreate(
-            ['email' => $email],
+
             [
+                'email' => $email,
                 'name' => 'User',
+                'surname' => 'Principal',
+
+                'phone' => 123456789,
+                'password' => Hash::make($password), // change le mot de passe avant prod
+                'email_verified_at' => now(),
                 'role' => 'user',
-                'password' => Hash::make($password),
+
             ]
         );
 

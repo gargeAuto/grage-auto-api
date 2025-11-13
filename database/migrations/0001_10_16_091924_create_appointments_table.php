@@ -19,7 +19,7 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('users')
                 ->onDelete('set null');
-            $table->dateTime("service")->nullable();
+            $table->string("service")->nullable();
             $table->dateTime("selectedStart");
             $table->decimal("total_price")->nullable();
             $table->decimal("new_price")->nullable();

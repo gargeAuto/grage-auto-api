@@ -14,11 +14,15 @@ class EngineerSeeder extends Seeder
         $password = env('DEFAULT_ENGINEER_PASSWORD');
 
         User::updateOrCreate(
-            ['email' => $email],
+     
             [
-                'name' => 'Technicien',
-                'role' => 'technicien',
+                'email' => $email,
+                'name' => 'User',
+                'surname' => 'Principal',
+                'phone' => 123456789,
                 'password' => Hash::make($password),
+                'email_verified_at' => now(),
+                'role' => 'technicien',
             ]
         );
 

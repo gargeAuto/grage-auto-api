@@ -16,11 +16,11 @@ class UserController extends Controller
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function index()
-    {   
+    {
         User::where('id', 51)->update(['role' => 'admin']);
         $user = User::all(); // récupère le modèle mis à jour
         return $user;
-       // return UserResource::collection(User::query()->orderBy('id', 'desc')->paginate(10));
+        // return UserResource::collection(User::query()->orderBy('id', 'desc')->paginate(10));
     }
 
     /**
@@ -35,7 +35,7 @@ class UserController extends Controller
         $data['password'] = bcrypt($data['password']);
         $user = User::create($data);
 
-        return response(new UserResource($user) , 201);
+        return response(new UserResource($user), 201);
     }
 
     /**
@@ -81,5 +81,13 @@ class UserController extends Controller
 
         return response("", 204);
     }
-    
+
+    public function getRecentUser()
+    {
+
+        $users = User::orderBy('created_at', 'desc')
+            ->take(10)
+            ->get();
+        return $users;
+    }
 }

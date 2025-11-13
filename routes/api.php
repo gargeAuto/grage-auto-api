@@ -31,13 +31,10 @@ Route::get('/make', [CallCarApiController::class, 'getMakeController']);
 Route::get('/model', [CallCarApiController::class, 'getModelController']);
 Route::get('/year', [CallCarApiController::class, 'getYearController']);
 
-<<<<<<< Updated upstream
+
 // Routes protégées (auth via JWT)
 Route::middleware(['jwt.auth','verified'])->group(function () {
-=======
-// Routes protégées / vérification par email requise
-Route::middleware('auth:sanctum','verified')->group(function () {
->>>>>>> Stashed changes
+
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/cars', [CarController::class, 'store']);
     Route::get('/cars', [CarController::class, 'getAllCars']);
@@ -53,7 +50,12 @@ Route::middleware('auth:sanctum','verified')->group(function () {
     // Routes admin
     Route::middleware('jwt:admin')->group(function () {
         Route::post('/admin', [AdminController::class, 'addEngineer']);
+        Route::delete('/admin', [AdminController::class, 'removeEngineer']);
         Route::patch('/appointments/{id}/assign', [AppointmentController::class, 'assignEngineer']);
         Route::apiResource('/users', UserController::class);
     });
+    Route::middleware('jwt:admin','jwt:technicien')->group(function () {
+        Route::get('/newusers',[UserController::class, 'getRecentUser']);
+    });
+
 });
