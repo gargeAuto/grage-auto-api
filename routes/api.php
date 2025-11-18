@@ -41,7 +41,6 @@ Route::middleware(['jwt.auth','verified'])->group(function () {
     Route::get('/cars/{id}', [CarController::class, 'getCarById']);
     Route::patch('/cars/{id}', [CarController::class, 'update']);
     Route::delete('/cars/{id}', [CarController::class, 'delete']);
-    Route::get('/cars/search', [CarController::class, 'search']);
     Route::post('/appointments', [AppointmentController::class, 'store']);
     Route::get('/user', fn(Request $request) => $request->user());
     Route::get('/appointments', [AppointmentController::class, 'getAppointmentWithRole']);
@@ -54,8 +53,10 @@ Route::middleware(['jwt.auth','verified'])->group(function () {
         Route::patch('/appointments/{id}/assign', [AppointmentController::class, 'assignEngineer']);
         Route::apiResource('/users', UserController::class);
     });
-    Route::middleware('jwt:admin','jwt:technicien')->group(function () {
+    Route::middleware('jwt:admin,technician')->group(function () {
         Route::get('/newusers',[UserController::class, 'getRecentUser']);
+        Route::get('/appointments-per-day', [AppointmentController::class, 'getTenAppointmentsOfTheDay']);
+        Route::get('/AppointementSearch', [AppointmentController::class, 'getAppointementSearch']);
+        Route::get('/cars/search', [CarController::class, 'search']);
     });
-
 });
