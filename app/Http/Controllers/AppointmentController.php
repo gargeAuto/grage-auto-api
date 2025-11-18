@@ -101,13 +101,16 @@ class AppointmentController extends Controller
 
         $dateTimeStart = now()->startOfDay();
         $dateTimeEnd = now()->endOfDay();
+        \Log::info("Récupération des rendez-vous entre {$dateTimeStart} et {$dateTimeEnd}");
 
         $appointments = Appointment::whereBetween('selectedStart', [$dateTimeStart, $dateTimeEnd])
             ->orderBy('selectedStart', 'desc')
-            ->paginate(10)
+            ->take(10)
             ->get();
-
-        return $appointments;
+          //->paginate(10);
+        return  response()->json([
+    'data' => $appointments
+]);
     }
 
     public function getAppointementSearch(Request $request)

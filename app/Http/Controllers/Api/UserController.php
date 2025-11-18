@@ -88,6 +88,10 @@ class UserController extends Controller
         $users = User::orderBy('created_at', 'desc')
             ->take(10)
             ->get();
-        return $users;
+
+            \Log::info("Derniers utilisateurs récupérés : ", $users->toArray());
+        return response()->json([
+    'data' => $users
+]);
     }
 }

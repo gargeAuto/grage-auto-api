@@ -31,7 +31,7 @@ class AppointmentSeeder extends Seeder
             'customer_id' => 3,
             'engineer_id' => 2,
             'service' => 'Contrôle technique',
-            'selectedStart' => Carbon::create(2025, 11, 15, 9, 0, 0),
+            'selectedStart' => Carbon::create(2025, 11, 17, 14, 0, 0),
         ]);
     }
 }
