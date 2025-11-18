@@ -14,11 +14,8 @@ return new class extends Migration
         Schema::create('appointments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('customer_id')->constrained('users')->onDelete('cascade');
-            $table
-                ->foreignId('engineer_id')
-                ->nullable()
-                ->constrained('users')
-                ->onDelete('set null');
+            $table->foreignId('car_id')->constrained('cars')->onDelete('cascade');
+        
             $table->string("service")->nullable();
             $table->dateTime("selectedStart");
             $table->decimal("total_price")->nullable();
