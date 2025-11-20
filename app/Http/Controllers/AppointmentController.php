@@ -69,7 +69,7 @@ class AppointmentController extends Controller
         $appointment->update([
             'engineer_id' => $request->engineer_id,
         ]);
-        $appointment->engineer()->sync([$request->engineer_id, $id]);
+        $appointment->engineer()->sync($request->engineer_id);
         return response()->json([
             'message' => 'Ingénieur assigné avec succès',
             'appointment' => $appointment,
@@ -124,9 +124,11 @@ class AppointmentController extends Controller
             'customer_name' => $appt->customer->name ?? null,
             'customer_surname' => $appt->customer->surname ?? null,
             'customer_email' => $appt->customer->email ?? null,
-            'engineer_name' => $appt->engineer->name ?? null,
-            'engineer_surname' => $appt->engineer->surname ?? null,
-            'engineer_email' => $appt->engineer->email ?? null,
+            'engineer' => $appt->engineer->map(fn($eng) => [
+                'name' => $eng->name,
+                'surname' => $eng->surname,
+                'email' => $eng->email,
+            ]),
             'car_immat' => $appt->car->immat ?? null,
             'car_make' => $appt->car->make ?? null,
             'car_model' => $appt->car->model ?? null,
@@ -142,7 +144,7 @@ class AppointmentController extends Controller
 
     public function getAppointementSearch(Request $request)
     {
-        $query = $request->input('q');
+        $query = $request->engineer_id;
         $columns = [
             'name',
             'surname',
@@ -157,9 +159,9 @@ class AppointmentController extends Controller
 
 
         $results = DB::table('appointments')
-            ->leftJoin('users', 'appointments.id', '=', 'users.id')
+            ->leftJoin('users', 'appointments.customer_id', '=', 'users.id')
             ->leftJoin('service', 'appointments.id', '=', 'service.id')
-            ->leftJoin('cars', 'users.id', '=', 'cars.id')
+            ->leftJoin('cars', 'appointments.car_id', '=', 'cars.id')
             ->select(
                 'name',
                 'surname',
@@ -171,6 +173,7 @@ class AppointmentController extends Controller
                 'wording',
                 'delay'
             );
+        
 
         $users = $results->where(function ($q) use ($query, $columns) {
             foreach ($columns as $column) {
@@ -178,7 +181,10 @@ class AppointmentController extends Controller
             }
         })
             ->get();
+              dump($users); 
 
-        return  $users;
+        return   response()->json([
+            'data' => $users
+        ]);
     }
 }

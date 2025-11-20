@@ -15,7 +15,6 @@ class Appointment extends Model
      */
     protected $fillable = [
         'customer_id',
-    
         'car_id',
         'service',
         'selectedStart',
@@ -30,7 +29,8 @@ class Appointment extends Model
     }
     public function engineer()
     {
-        return $this->belongsToMany(\App\Models\User::class, 'users_appointments');
+          return $this->belongsToMany(User::class, 'users_appointments', 'appointment_id', 'user_id')
+                    ->where('role', 'technicien');
     }
     public function service()
     {

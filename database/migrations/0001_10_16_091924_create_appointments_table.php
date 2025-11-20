@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('customer_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('car_id')->constrained('cars')->onDelete('cascade');
-        
+            
             $table->string("service")->nullable();
             $table->dateTime("selectedStart");
             $table->decimal("total_price")->nullable();

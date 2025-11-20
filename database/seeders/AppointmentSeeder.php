@@ -26,7 +26,6 @@ class AppointmentSeeder extends Seeder
 
         Appointment::create([
             'customer_id' => 3,
-            'engineer_id' => 2,
             'car_id' => $car->id,
             'service' => 'Révision complète',
             'selectedStart' => Carbon::create(2025, 11, 13, 10, 0, 0),
@@ -34,7 +33,6 @@ class AppointmentSeeder extends Seeder
 
         Appointment::create([
             'customer_id' => 3,
-            'engineer_id' => 2,
             'car_id' => $car->id,
             'service' => 'Changement de pneus',
             'selectedStart' => Carbon::create(2025, 11, 14, 14, 30, 0),
@@ -42,7 +40,6 @@ class AppointmentSeeder extends Seeder
 
         Appointment::create([
             'customer_id' => 3,
-            'engineer_id' => 2,
             'car_id' => $car->id,
             'service' => 'Contrôle technique',
             'selectedStart' => Carbon::create(2025, 11, 18, 14, 0, 0),
