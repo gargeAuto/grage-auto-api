@@ -23,7 +23,7 @@ class CarsSeeder extends Seeder
         ]);
 
         Cars::create([
-            'user_id' => 3,
+            'user_id' => 1,
             'immat' => 1001,
             'km' => 2001,
             'make' => "oui",
@@ -32,7 +32,7 @@ class CarsSeeder extends Seeder
         ]);
 
         Cars::create([
-            'user_id' => 3,
+            'user_id' => 1,
             'immat' => 1002,
             'km' => 2002,
             'make' => "oui",

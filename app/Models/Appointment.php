@@ -15,7 +15,7 @@ class Appointment extends Model
      */
     protected $fillable = [
         'customer_id',
-        'engineer_id',
+        'car_id',
         'service',
         'selectedStart',
         //'total_price',
@@ -27,13 +27,18 @@ class Appointment extends Model
     {
         return $this->belongsTo(\App\Models\User::class, 'customer_id');
     }
-    public function engeener()
+    public function engineer()
     {
-        return $this->belongsTo(\App\Models\User::class, 'engineer_id');
+          return $this->belongsToMany(User::class, 'users_appointments', 'appointment_id', 'user_id')
+                    ->where('role', 'technicien');
     }
     public function service()
     {
         return $this->belongsToMany(\App\Models\Service::class, 'appointment_service');
+    }
+        public function car()
+    {
+        return $this->belongsTo(\App\Models\Cars::class, 'car_id');
     }
    
 }

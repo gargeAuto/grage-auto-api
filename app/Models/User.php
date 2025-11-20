@@ -6,7 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens; 
+use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 class User extends Authenticatable implements MustVerifyEmail
@@ -49,4 +49,12 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
         ];
     }
+    public function appointment()
+    {
+        return $this->belongsToMany(\App\Models\Appointment::class, 'users_appointments');
+    }
+    public function appointments()
+{
+    return $this->hasMany(\App\Models\Appointment::class, 'customer_id');
+}
 }

@@ -42,7 +42,7 @@ Route::middleware(['jwt.auth','verified'])->group(function () {
     Route::patch('/cars/{id}', [CarController::class, 'update']);
     Route::delete('/cars/{id}', [CarController::class, 'delete']);
     Route::post('/appointments', [AppointmentController::class, 'store']);
-    Route::get('/user', fn(Request $request) => $request->user());
+    Route::get('/user', fn(Request $request) => $request->user()); 
     Route::get('/appointments', [AppointmentController::class, 'getAppointmentWithRole']);
     Route::delete('/appointments/{id}', [AppointmentController::class, 'destroy']);
 
@@ -57,6 +57,7 @@ Route::middleware(['jwt.auth','verified'])->group(function () {
         Route::get('/newusers',[UserController::class, 'getRecentUser']);
         Route::get('/appointments-per-day', [AppointmentController::class, 'getTenAppointmentsOfTheDay']);
         Route::get('/AppointementSearch', [AppointmentController::class, 'getAppointementSearch']);
-        Route::get('/cars/search', [CarController::class, 'search']);
+        Route::get('/cars-search', [CarController::class, 'search']);
+        Route::get('/users-search', [UserController::class, 'getUserSearch']);
     });
 });

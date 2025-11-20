@@ -10,7 +10,8 @@ use App\Models\Service;
 use Illuminate\Support\Facades\Mail;
 use App\Models\User;
 use App\Models\Cars;
-use Illuminate\Container\Attributes\DB;
+use Illuminate\Support\Facades\DB;
+
 
 class AppointmentController extends Controller
 {
@@ -34,12 +35,14 @@ class AppointmentController extends Controller
         $appointment = Appointment::create([
             'customer_id' => $user->id,
             'selectedStart' => $date,
-            'engineer_id' => $appointmentData['engineer_id'] ?? null,
+
             'service' => $appointmentData['service'] ?? null,
             // 'total_price' => $appointmentData['total_price'] ?? null,
             // 'new_price' => $appointmentData['new_price'] ?? null,
             // 'comments' => $appointmentData['comments'] ?? null,
         ]);
+
+
 
         /** @var User $user */
         Mail::to($user->email)->send(new ConfirmationAppointmentMail($user, $cars, $appointment));
@@ -63,10 +66,10 @@ class AppointmentController extends Controller
     public function assignEngineer(Request $request, $id)
     {
         $appointment = Appointment::findOrFail($id);
-
         $appointment->update([
             'engineer_id' => $request->engineer_id,
         ]);
+        $appointment->engineer()->sync($request->engineer_id);
         return response()->json([
             'message' => 'Ingénieur assigné avec succès',
             'appointment' => $appointment,
@@ -101,36 +104,87 @@ class AppointmentController extends Controller
 
         $dateTimeStart = now()->startOfDay();
         $dateTimeEnd = now()->endOfDay();
-        \Log::info("Récupération des rendez-vous entre {$dateTimeStart} et {$dateTimeEnd}");
 
-        $appointments = Appointment::whereBetween('selectedStart', [$dateTimeStart, $dateTimeEnd])
+        $appointments = Appointment::with([
+            'customer' => fn($query) => $query->where('role', 'user'),
+            'engineer' => fn($query) => $query->where('role', 'technicien'),
+            'car',
+            'service'
+        ])
+            ->whereBetween('selectedStart', [$dateTimeStart, $dateTimeEnd])
             ->orderBy('selectedStart', 'desc')
             ->take(10)
             ->get();
-          //->paginate(10);
+
+        // Transformation en JSON
+        $data = $appointments->map(fn($appt) => [
+            'appointment_id' => $appt->id,
+            'selectedStart' => $appt->selectedStart,
+            'total_price' => $appt->total_price,
+            'customer_name' => $appt->customer->name ?? null,
+            'customer_surname' => $appt->customer->surname ?? null,
+            'customer_email' => $appt->customer->email ?? null,
+            'engineer' => $appt->engineer->map(fn($eng) => [
+                'name' => $eng->name,
+                'surname' => $eng->surname,
+                'email' => $eng->email,
+            ]),
+            'car_immat' => $appt->car->immat ?? null,
+            'car_make' => $appt->car->make ?? null,
+            'car_model' => $appt->car->model ?? null,
+            'service_wording' => $appt->service->wording ?? null,
+            'service_delay' => $appt->service->delay ?? null,
+        ]);
+        //->paginate(10);
+
         return  response()->json([
-    'data' => $appointments
-]);
+            'data' => $data
+        ]);
     }
 
     public function getAppointementSearch(Request $request)
     {
-        $query = $request->input('q');
-        $columns = ['name', 'surname', 'email', 'phone'];
+        $query = $request->engineer_id;
+        $columns = [
+            'name',
+            'surname',
+            'email',
+            'immat',
+            'make',
+            'model',
+            'appointments.selectedStart',
+            'wording',
+            'delay'
+        ];
 
 
         $results = DB::table('appointments')
-            ->join('users', 'appointments.id', '=', 'users.customer_id')
-            ->join('service','appointments.id', '=', 'service.customer_id')
-            ->select('users.name', 'posts.title');
+            ->leftJoin('users', 'appointments.customer_id', '=', 'users.id')
+            ->leftJoin('service', 'appointments.id', '=', 'service.id')
+            ->leftJoin('cars', 'appointments.car_id', '=', 'cars.id')
+            ->select(
+                'name',
+                'surname',
+                'email',
+                'immat',
+                'make',
+                'model',
+                'appointments.selectedStart',
+                'wording',
+                'delay'
+            );
+        
 
-         $users = $results->where(function ($q) use ($query, $columns) {
+        $users = $results->where(function ($q) use ($query, $columns) {
             foreach ($columns as $column) {
                 $q->orWhere($column, 'like', "%{$query}%");
             }
         })
             ->get();
+        
 
-            return  $users;
+        return   response()->json([
+            'data' => $users
+        ]);
     }
 }

@@ -7,6 +7,8 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -85,13 +87,69 @@ class UserController extends Controller
     public function getRecentUser()
     {
 
-        $users = User::orderBy('created_at', 'desc')
-            ->take(10)
+        /*$users = User::orderBy('created_at', 'desc')
+        ->take(10)
+        ->get();*/
+
+        $querry = DB::table('users')
+            ->leftJoin('cars', 'users.id', '=', 'cars.id')
+            ->select(
+                'name',
+                'surname',
+                'email',
+                'phone',
+                'users.id',
+                'immat',
+                'model',
+                'year',
+                'make'
+            )
+            ->orderBy('users.created_at', 'desc')
+            ->paginate(10);
+      // dump($querry);
+        return response()->json([
+            'data' => $querry
+        ]);
+    }
+    public function getUserSearch(Request $request)
+    {
+
+        $query = $request->search;
+        $columns = [
+            'name',
+            'surname',
+            'email',
+            'phone',
+            'users.id',
+            'immat',
+            'model',
+            'year',
+            'make'
+        ];
+
+        $results = DB::table('users')
+            ->leftJoin('cars', 'users.id', '=', 'cars.id')
+            ->select(
+                'name',
+                'surname',
+                'email',
+                'phone',
+                'users.id',
+                'immat',
+                'model',
+                'year',
+                'make'
+            );
+
+        $users = $results->where(function ($q) use ($query, $columns) {
+            foreach ($columns as $column) {
+                $q->orWhere($column, 'like', "%{$query}%");
+            }
+        })
             ->get();
 
-            \Log::info("Derniers utilisateurs récupérés : ", $users->toArray());
-        return response()->json([
-    'data' => $users
-]);
+        return  response()->json([
+            'data' => $users
+        ]);
     }
 }
