@@ -106,7 +106,7 @@ class UserController extends Controller
             )
             ->orderBy('users.created_at', 'desc')
             ->paginate(10);
-        \Log::info("Derniers utilisateurs récupérés : ", $querry->toArray());
+      // dump($querry);
         return response()->json([
             'data' => $querry
         ]);
@@ -114,7 +114,7 @@ class UserController extends Controller
     public function getUserSearch(Request $request)
     {
 
-        $query = $request->query('search');
+        $query = $request->search;
         $columns = [
             'name',
             'surname',
@@ -148,6 +148,8 @@ class UserController extends Controller
         })
             ->get();
 
-        return  $users;
+        return  response()->json([
+            'data' => $users
+        ]);
     }
 }

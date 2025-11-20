@@ -181,7 +181,7 @@ class AppointmentController extends Controller
             }
         })
             ->get();
-              dump($users); 
+        
 
         return   response()->json([
             'data' => $users

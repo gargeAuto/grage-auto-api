@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -83,6 +84,9 @@ class AssignEngineerTest extends TestCase
         $request2 = new Request([
             'engineer_id' => 'User'
         ]);
+        $request3 = new Request([
+            'search' => 'User'
+        ]);
         $request = new Request([
             'engineer_id' => [2]
         ]);
@@ -105,5 +109,10 @@ class AssignEngineerTest extends TestCase
       
        // dd($data," ceci est un dd");
         dump($data," ceci est un dump");
+
+            $controller = new UserController();
+        $response = $controller->getUserSearch($request3);
+        
+        dump($response," ceci est un dump getuser");
     }
 }
