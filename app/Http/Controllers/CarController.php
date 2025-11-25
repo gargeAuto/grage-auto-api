@@ -57,6 +57,7 @@ class CarController extends Controller
             'data'=>$car,
         ]);
     }
+    
 
     public function update(Request $request, $id)
     {
