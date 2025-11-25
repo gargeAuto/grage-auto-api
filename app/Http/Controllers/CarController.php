@@ -51,6 +51,14 @@ class CarController extends Controller
         return response()->json($car);
     }
 
+    public function getCarsByUserId(Request $request, $userId){
+        $car = Cars::where('user_id',$userId)->get();
+        return response()->json([
+            'data'=>$car,
+        ]);
+    }
+    
+
     public function update(Request $request, $id)
     {
         $car = Cars::findOrFail($id);
