@@ -38,7 +38,7 @@ Route::middleware(['jwt.auth','verified'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/cars', [CarController::class, 'store']);
     Route::get('/cars', [CarController::class, 'getAllCars']);
-    Route::get('/cars/{id}', [CarController::class, 'getCarById']);
+    Route::get('/cars/{id}', [CarController::class, 'getCarsByUserId']);
     Route::patch('/cars/{id}', [CarController::class, 'update']);
     Route::delete('/cars/{id}', [CarController::class, 'delete']);
     Route::post('/appointments', [AppointmentController::class, 'store']);
