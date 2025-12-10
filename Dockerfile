@@ -51,15 +51,15 @@ RUN useradd -m appuser \
     && chown -R appuser:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
+# Copier l'entrypoint
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
 # Passer à l'utilisateur appuser
 USER appuser
 
 # Exposer le port
 EXPOSE 8085
-
-# Copier l'entrypoint
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
 
 # Définir l'entrypoint
 ENTRYPOINT ["/entrypoint.sh"]
