@@ -29,6 +29,7 @@ RUN apt-get update && apt-get install -y \
     php8.2-intl \
     php8.2-gd \
     php8.2-opcache \
+    default-mysql-client \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
