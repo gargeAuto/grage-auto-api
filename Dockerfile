@@ -43,6 +43,9 @@ WORKDIR /var/www/html
 # Copier l'application
 COPY . /var/www/html
 
+# Installer dépendances Laravel
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+
 # Permissions Laravel
 RUN useradd -m appuser \
     && chown -R appuser:www-data /var/www/html \
