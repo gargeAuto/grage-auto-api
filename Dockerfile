@@ -3,12 +3,21 @@ FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Installer PHP et dépendances
+# Installer dépendances système
 RUN apt-get update && apt-get install -y \
-    git \
+    software-properties-common \
+    ca-certificates \
+    lsb-release \
     curl \
+    git \
     unzip \
-    zip \
+    zip
+
+# Ajouter le dépôt PHP d'Ondrej
+RUN add-apt-repository ppa:ondrej/php -y
+
+# Installer PHP 8.2 + extensions
+RUN apt-get update && apt-get install -y \
     php8.2 \
     php8.2-cli \
     php8.2-mysql \
@@ -28,21 +37,19 @@ RUN curl -sS https://getcomposer.org/installer -o composer-setup.php \
     && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
     && rm composer-setup.php
 
-# Définir le dossier de travail
+# Dossier de travail
 WORKDIR /var/www/html
 
-# Copier l’application
+# Copier l'application
 COPY . /var/www/html
 
-# Permissions
+# Permissions Laravel
 RUN useradd -m appuser \
     && chown -R appuser:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 USER appuser
 
-# Exposer le port
 EXPOSE 8085
 
-# Commande pour lancer Laravel
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8085"]
