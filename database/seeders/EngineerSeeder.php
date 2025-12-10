@@ -10,8 +10,8 @@ class EngineerSeeder extends Seeder
 {
     public function run()
     {
-        $email = env('DEFAULT_ENGINEER_EMAIL');
-        $password = env('DEFAULT_ENGINEER_PASSWORD');
+        $email = 'salut@salut.com';
+        $password = 'Salut';
 
         User::updateOrCreate(
      

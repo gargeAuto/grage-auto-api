@@ -10,8 +10,8 @@ class UserSeeder extends Seeder
 {
     public function run()
     {
-        $email = env('DEFAULT_USER_EMAIL');
-        $password = env('DEFAULT_USER_PASSWORD');
+        $email = 'DEFAULT_USER_EMAIL@salut.com';
+        $password = 'DEFAULT_USER_PASSWORD';
 
         User::updateOrCreate(
 
