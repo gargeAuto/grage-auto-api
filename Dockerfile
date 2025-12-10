@@ -55,4 +55,12 @@ USER appuser
 
 EXPOSE 8085
 
+# Copier l'entrypoint
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Définir l'entrypoint
+ENTRYPOINT ["/entrypoint.sh"]
+
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8085"]
+

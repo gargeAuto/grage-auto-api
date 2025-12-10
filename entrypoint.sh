@@ -1,15 +1,28 @@
 #!/bin/sh
+set -e
 
-# Attendre MySQL
-echo "Waiting for MySQL..."
-until php -r "try { new PDO('mysql:host=' . getenv('DB_HOST') . ';port=' . getenv('DB_PORT'), getenv('DB_USERNAME'), getenv('DB_PASSWORD')); echo 'OK'; } catch (Exception \$e) { exit(1); }"; do
+echo "Starting entrypoint..."
+
+# --- Attendre MySQL ---
+echo "Waiting for MySQL to be ready..."
+while ! mysqladmin ping -h"$DB_HOST" -P"$DB_PORT" --silent; do
     sleep 2
 done
-
 echo "MySQL is ready!"
 
-# Lancer les migrations
-php artisan migrate --force
+# --- Générer la clé si nécessaire ---
+if [ -z "$APP_KEY" ] || [ "$APP_KEY" = "base64:" ]; then
+    echo "Generating APP_KEY..."
+    php artisan key:generate --no-interaction
+else
+    echo "APP_KEY already set."
+fi
 
-# Exécuter la commande finale (php artisan serve)
-exec "$@"
+# --- Lancer les migrations ---
+echo "Running migrations..."
+php artisan migrate --force
+php artisan db:seed --force
+
+# --- Lancer le serveur Laravel ---
+echo "Starting Laravel..."
+exec php artisan serve --host=0.0.0.0 --port=8085
