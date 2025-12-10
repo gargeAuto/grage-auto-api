@@ -20,6 +20,6 @@ class DatabaseSeeder extends Seeder
         $this->call(CarsSeeder::class); 
 
 
-        User::factory(50)->create();
+        //User::factory(50)->create();
     }
 }
