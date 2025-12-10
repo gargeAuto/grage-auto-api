@@ -10,9 +10,7 @@ services:
     ports:
       - "8085:8085"
     environment:
-      APP_ENV: local
-      APP_DEBUG: 1
-
+      APP_KEY: ${APP_KEY}
       DB_CONNECTION: mysql
       DB_HOST: mysql
       DB_PORT: 3306

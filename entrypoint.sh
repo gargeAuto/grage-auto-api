@@ -12,8 +12,8 @@ echo "MySQL is ready!"
 
 # --- Lancer les migrations ---
 echo "Running migrations..."
-php artisan migrate:refresh --force
-#php artisan db:seed --force
+php artisan migrate --force
+php artisan db:seed --force
 
 # --- Lancer le serveur Laravel ---
 echo "Starting Laravel..."
