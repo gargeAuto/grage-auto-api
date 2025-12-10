@@ -10,14 +10,6 @@ while ! mysqladmin ping -h"$DB_HOST" -P"$DB_PORT" --silent; do
 done
 echo "MySQL is ready!"
 
-# --- Générer la clé si nécessaire ---
-if [ -z "$APP_KEY" ] || [ "$APP_KEY" = "base64:" ]; then
-    echo "Generating APP_KEY..."
-    php artisan key:generate --no-interaction
-else
-    echo "APP_KEY already set."
-fi
-
 # --- Lancer les migrations ---
 echo "Running migrations..."
 php artisan migrate --force
