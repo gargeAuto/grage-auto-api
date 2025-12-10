@@ -8,8 +8,7 @@ services:
     image: laravel-app:latest
     container_name: laravel-app
     ports:
-      - "80:80"         # Nginx
-      - "443:443"       # HTTPS si tu configures SSL
+      - "8085:8085"
     environment:
       APP_ENV: local
       APP_DEBUG: 1
@@ -22,7 +21,6 @@ services:
       - .:/var/www/html
     depends_on:
       - mysql
-      - mailpit
 
   mysql:
     image: mysql:8.0
@@ -40,13 +38,6 @@ services:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       retries: 5
       timeout: 5s
-
-  mailpit:
-    image: axllent/mailpit
-    container_name: mailpit
-    ports:
-      - "1025:1025"  # SMTP
-      - "8025:8025"  # Web UI
 
 volumes:
   mysql-data:

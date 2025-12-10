@@ -1,23 +1,15 @@
-# ---------- Base image ----------
+# ---------- Base ----------
 FROM ubuntu:22.04
 
-# ---------- Variables d'environnement ----------
 ENV DEBIAN_FRONTEND=noninteractive
-ENV TZ=Europe/Paris
 
-# ---------- Installer dépendances système ----------
+# Installer PHP et dépendances
 RUN apt-get update && apt-get install -y \
     git \
     curl \
     unzip \
     zip \
-    wget \
-    nano \
-    ca-certificates \
-    supervisor \
-    nginx \
     php8.2 \
-    php8.2-fpm \
     php8.2-cli \
     php8.2-mysql \
     php8.2-mbstring \
@@ -28,36 +20,29 @@ RUN apt-get update && apt-get install -y \
     php8.2-intl \
     php8.2-gd \
     php8.2-opcache \
-    php8.2-soap \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# ---------- Installer Composer ----------
+# Installer Composer
 RUN curl -sS https://getcomposer.org/installer -o composer-setup.php \
     && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
     && rm composer-setup.php
 
-# ---------- Créer le dossier de travail ----------
+# Définir le dossier de travail
 WORKDIR /var/www/html
 
-# ---------- Copier l'application ----------
+# Copier l’application
 COPY . /var/www/html
 
-# ---------- Permissions ----------
-RUN useradd -G www-data,root -u 1000 -d /home/app app \
-    && chown -R app:www-data /var/www/html \
+# Permissions
+RUN useradd -m appuser \
+    && chown -R appuser:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# ---------- Configurer Nginx ----------
-RUN rm /etc/nginx/sites-enabled/default
-COPY ./docker/nginx/default.conf /etc/nginx/sites-available/default
-RUN ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
+USER appuser
 
-# ---------- Supervisord pour PHP-FPM + Nginx ----------
-COPY ./docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+# Exposer le port
+EXPOSE 8085
 
-# ---------- Exposer ports ----------
-EXPOSE 80 443
-
-# ---------- Entrypoint ----------
-CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# Commande pour lancer Laravel
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8085"]
