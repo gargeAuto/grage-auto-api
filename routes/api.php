@@ -1,0 +1,63 @@
+<?php
+
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\CallCarApiController;
+use App\Http\Controllers\CarController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| is assigned the "api" middleware group. Enjoy building your API!
+|
+*/
+
+// Auth publique
+Route::post('/signup', [AuthController::class, 'signUp']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::get('/verify-email', [AuthController::class, 'verifyEmail'])
+    ->name('verify.email');
+
+// API publiques
+Route::get('/make', [CallCarApiController::class, 'getMakeController']);
+Route::get('/model', [CallCarApiController::class, 'getModelController']);
+Route::get('/year', [CallCarApiController::class, 'getYearController']);
+
+
+// Routes protégées (auth via JWT)
+Route::middleware(['jwt.auth','verified'])->group(function () {
+
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/cars', [CarController::class, 'store']);
+    Route::get('/cars', [CarController::class, 'getAllCars']);
+    Route::get('/cars/{id}', [CarController::class, 'getCarsByUserId']);
+    Route::patch('/cars/{id}', [CarController::class, 'update']);
+    Route::delete('/cars/{id}', [CarController::class, 'delete']);
+    Route::post('/appointments', [AppointmentController::class, 'store']);
+    Route::get('/user', fn(Request $request) => $request->user()); 
+    Route::get('/appointments', [AppointmentController::class, 'getAppointmentWithRole']);
+    Route::delete('/appointments/{id}', [AppointmentController::class, 'destroy']);
+
+    // Routes admin
+    Route::middleware('jwt:admin')->group(function () {
+        Route::post('/admin', [AdminController::class, 'addEngineer']);
+        Route::delete('/admin', [AdminController::class, 'removeEngineer']);
+        Route::patch('/appointments/{id}/assign', [AppointmentController::class, 'assignEngineer']);
+        Route::apiResource('/users', UserController::class);
+    });
+    Route::middleware('jwt:admin,technician')->group(function () {
+        Route::get('/newusers',[UserController::class, 'getRecentUser']);
+        Route::get('/appointments-per-day', [AppointmentController::class, 'getTenAppointmentsOfTheDay']);
+        Route::get('/AppointementSearch', [AppointmentController::class, 'getAppointementSearch']);
+        Route::get('/cars-search', [CarController::class, 'search']);
+        Route::get('/users-search', [UserController::class, 'getUserSearch']);
+    });
+});
